@@ -1,0 +1,3 @@
+/home/shavarsh/qt-projects/simple_shutter/unit_test/CMakeFiles/rebuild_cache.dir
+/home/shavarsh/qt-projects/simple_shutter/unit_test/CMakeFiles/edit_cache.dir
+/home/shavarsh/qt-projects/simple_shutter/unit_test/CMakeFiles/executeTests.dir
