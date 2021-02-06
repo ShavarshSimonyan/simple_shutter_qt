@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QHBoxLayout>
 #include <QMenuBar>
 #include <QWidget>
 
@@ -23,8 +22,6 @@ public slots:
 private:
 
     SpaceWars *mSpaceWars;
-
-    QHBoxLayout *mMainLayout;
 
     QMenuBar *mMenuBar;
 

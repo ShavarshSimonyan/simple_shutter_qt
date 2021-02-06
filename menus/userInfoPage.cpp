@@ -26,6 +26,9 @@ userInfoPage::userInfoPage (int w, int h, QWidget *parent): QWidget(parent),
     mUserSecondName = new QTextEdit (this);
     mUserSecondName->setFixedSize(this->width() / 2, this->height() / 8);
 
+    //create main layout
+    mMainLayout = new QVBoxLayout ();
+
     //create grid layout for first name
     QGridLayout *pGridLayout = new QGridLayout (this);
 
@@ -40,10 +43,7 @@ userInfoPage::userInfoPage (int w, int h, QWidget *parent): QWidget(parent),
     pGridLayout->addWidget(pSecondNameLabel, 2, 0);
     pGridLayout->addWidget(mUserSecondName, 2, 1);
 
-    //create main layout
-    mMainLayout = new QVBoxLayout (this);
     mMainLayout->addLayout(pGridLayout);
-
     //create close button
     mCancelButton = new QPushButton (this);
     mCancelButton->setText("Cancel");

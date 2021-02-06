@@ -11,10 +11,16 @@
 #include <QMessageBox>
 
 QScopedPointer <dbData> dbData::mInstance(nullptr);
+const QString dbData::mMainTableName = "MAIN";
+const QString dbData::mLevelTableName = "LEVEL";
 
-dbData::dbData (): mCurrentUserID(0)
+dbData::dbData (): mCurrentUserID(0), mCurrentGameLevel(1)
 {}
 
+dbData::~dbData ()
+{
+
+}
 QScopedPointer<dbData>& dbData::getInstance()
 {
     if (!mInstance)
@@ -29,7 +35,7 @@ QScopedPointer<dbData>& dbData::getInstance()
 
 bool dbData::connectToDB ()
 {
-    QString strDbName = QString("spaceWars.db");
+    static const QString strDbName = QString("spaceWars.db");
     QDir dbFile (strDbName);
     bool bExists = dbFile.exists();
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
@@ -51,32 +57,55 @@ bool dbData::connectToDB ()
         }
         else
         {
-            QString strMainTable;
+            QString strMainTable, strLevelTable, tmp;
             while (query.next())
             {
-                strMainTable = query.value(0).toString();
-                if (strMainTable == "MAIN")
-                    break;
-                else
-                    strMainTable.clear();
+                tmp = query.value(0).toString();
+                if (tmp == mMainTableName)
+                {
+                    strMainTable = tmp;
+                    if (!strLevelTable.isEmpty())
+                        break;
+                }
+                else if (tmp == mLevelTableName)
+                {
+                    strLevelTable = tmp;
+                    if (!strMainTable.isEmpty())
+                        break;
+                }
             }
 
             if (strMainTable.isEmpty() &&
-                !query.exec("CREATE TABLE MAIN (id INT PRIMARY KEY NOT NULL, "
+                !query.exec(QString("CREATE TABLE %1 (id INT PRIMARY KEY NOT NULL, "
                             "name VARCHAR(40), secondname VARCHAR(40), "
-                            "score INT);"))
+                            "score INT);").arg(mMainTableName)))
             {
                 qDebug() << query.lastError().text();
                 return false;
             }
 
-            if (!query.exec("SELECT MAX(id) FROM MAIN;"))
+            if (!query.exec(QString("SELECT MAX(id) FROM %1;").arg(mMainTableName)))
             {
                 qDebug() << query.lastError().text();
                 return false;
             }
             else if (query.next())
                 mCurrentUserID = query.value(0).toInt();
+
+            if (strLevelTable.isEmpty() &&
+                !query.exec(QString("CREATE TABLE %1 (level INT PRIMARY KEY NOT NULL)").arg(mLevelTableName)))
+            {
+                qDebug() << query.lastError().text();
+                return false;
+            }
+
+            if (!query.exec(QString("SELECT level FROM %1;").arg(mLevelTableName)))
+            {
+                qDebug() << query.lastError().text();
+                return false;
+            }
+            else if (query.next())
+                mCurrentGameLevel = query.value(0).toInt();
         }
     }
 
@@ -107,8 +136,9 @@ void dbData::enterData (const QString &firstname,
                             const QString &secondname,
                             const int score)
 {
-    QString strQuery = QString("INSERT INTO MAIN (id, name, secondname, score)"
-                          " VALUES (%1, \'%2\', \'%3\', \'%4\');")
+    QString strQuery = QString("INSERT INTO %1 (id, name, secondname, score)"
+                          " VALUES (%2, \'%3\', \'%4\', \'%5\');")
+        .arg (mMainTableName)
        .arg(++mCurrentUserID)
        .arg(firstname)
        .arg(secondname)
@@ -116,6 +146,40 @@ void dbData::enterData (const QString &firstname,
     QSqlQuery query;
     if (!query.exec(strQuery))
         qDebug() << query.lastQuery() << "\n\n" << query.lastError().text();
+}
+int dbData::getGameLevel () const
+{
+    return mCurrentGameLevel;
+}
+
+void dbData::setGameLevel (const QString &newVal)
+{
+    mCurrentGameLevel = newVal.toInt();
+    QString strCheckQuery = QString ("SELECT * from %1").arg(mLevelTableName);
+    bool isFirstUsage = false;
+    QSqlQuery query;
+    if (!query.exec(strCheckQuery))
+        qDebug() << query.lastQuery() << "\n\n" << query.lastError().text();
+    else if (!query.next())
+        isFirstUsage = true;
+
+    QString strQuery;
+    if (isFirstUsage)
+        strQuery = QString("INSERT INTO %1 (level)"
+                           " VALUES (%2);").arg(mLevelTableName).arg(mCurrentGameLevel);
+     else
+        strQuery = QString("UPDATE  %1 set level = %2 WHERE level <> %2;")
+                      .arg(mLevelTableName)
+                      .arg(mCurrentGameLevel);
+
+    if (!query.exec(strQuery))
+        qDebug() << query.lastQuery() << "\n\n" << query.lastError().text();
+    /*query.exec("SELECT level from LEVEL");
+    qDebug() << "getting values from level tablea\n\t";
+    while (query.next())
+    {
+        qDebug() << query.value(0).toString() << "\n\t";
+    }*/
 }
 
 dbEntry::dbEntry (const QString &name,

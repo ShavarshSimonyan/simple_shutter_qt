@@ -1,7 +1,17 @@
 #include "MainWindow.h"
+#include "../db_handling/dbData.h"
+
+#include <chrono>
+#include <thread>
+#include <iostream>
+#include <unistd.h>
 
 MainWindow::MainWindow ()
 {
+    // for debuging
+    //std::cout << "pid = " << getpid() << std::endl;
+    //std::this_thread::sleep_for(std::chrono::seconds(30));
+    //////////////////////////////////////////////////////
     //setup mainwindow
     setWindowTitle("SpaceWars");
     setGeometry(0, 0, mSceneWidth, mSceneHeight + mMenuBarHeight);
@@ -12,7 +22,7 @@ MainWindow::MainWindow ()
     mSpaceWars->move(0, mMenuBarHeight);
 
     //create main layout
-    mMainLayout = new QHBoxLayout(this);
+    //mMainLayout = new QHBoxLayout(this);
 
     //setup menus
     mMenuBar = new QMenuBar (this);
@@ -42,12 +52,16 @@ MainWindow::MainWindow ()
     mMenuBar->addMenu(menu);
 
     //add items to layout
-    mMainLayout->addWidget(mMenuBar);
-    mMainLayout->addWidget(mSpaceWars);
+    //mMainLayout->addWidget(mMenuBar);
+    //mMainLayout->addWidget(mSpaceWars);
 
     //connect signals
     connect(mSettingsPage->getCombo(), SIGNAL(currentTextChanged(const QString &)), mSpaceWars, SLOT(setGameLevel(const QString &)));
+    connect(mSettingsPage->getCombo(), SIGNAL(currentTextChanged(const QString &)), dbData::getInstance().data(), SLOT(setGameLevel(const QString &)));
     connect(mSpaceWars, SIGNAL(finishGame(int)), this, SLOT(gameFinished(int)));
+
+    //set stored level value as default
+    mSpaceWars->setGameLevel(QString("%1").arg(dbData::getInstance()->getGameLevel()));
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event)

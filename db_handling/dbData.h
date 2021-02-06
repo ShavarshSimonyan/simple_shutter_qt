@@ -4,6 +4,7 @@
 #include <QScopedPointer>
 #include <QString>
 #include <QList>
+#include <QObject>
 
 struct dbEntry
 {
@@ -15,19 +16,28 @@ struct dbEntry
     int mScore;
 };
 
-class dbData
+class dbData: public QObject
 {
+    Q_OBJECT
 public:
     static QScopedPointer<dbData>& getInstance ();
     void enterData (const QString &, const QString &, const int);
+    int getGameLevel () const;
     QList<dbEntry> retrieveData ();
+    virtual ~dbData ();
+public slots:
+    void setGameLevel (const QString &);
 private:
     dbData ();
 
     bool connectToDB ();
 
     int mCurrentUserID;
+    int mCurrentGameLevel;
 
     static QScopedPointer <dbData> mInstance;
+
+    static const QString mMainTableName;
+    static const QString mLevelTableName;
 };
 #endif // DBDATA_H

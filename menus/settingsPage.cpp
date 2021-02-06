@@ -1,5 +1,6 @@
 #include "settingsPage.h"
-
+#include "../db_handling/dbData.h"
+#include <QDebug>
 settingsPage::settingsPage (int width,
                             int height,
                             QWidget *parent) : QWidget(parent),
@@ -15,7 +16,7 @@ settingsPage::settingsPage (int width,
     mMenuTitle->setAlignment(Qt::AlignCenter);
 
     //create the layout
-    mMainLayout = new QVBoxLayout (this);
+    mMainLayout = new QVBoxLayout ();
 
     //create close button
     mCloseButton = new QPushButton (this);
@@ -28,6 +29,10 @@ settingsPage::settingsPage (int width,
     mGameLevel->addItem("1");
     mGameLevel->addItem("2");
     mGameLevel->addItem("3");
+
+    //set stored value
+    int val = dbData::getInstance()->getGameLevel() - 1;
+    mGameLevel->setCurrentIndex(val);
 
     //create grid layout
     QGridLayout *pGridLayout = new QGridLayout (this);
