@@ -1,3 +1,4 @@
+//
 #include "settingsPage.h"
 #include "../db_handling/dbData.h"
 #include <QDebug>
