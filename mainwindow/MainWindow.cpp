@@ -22,7 +22,6 @@ MainWindow::MainWindow ()
     mSpaceWars->move(0, mMenuBarHeight);
 
     //create main layout
-    //mMainLayout = new QHBoxLayout(this);
 
     //setup menus
     mMenuBar = new QMenuBar (this);
@@ -50,10 +49,6 @@ MainWindow::MainWindow ()
     menu->addAction("&Records", mRecordsMenu, SLOT(show()));
     menu->addAction("&Exit", this, SLOT (close()));
     mMenuBar->addMenu(menu);
-
-    //add items to layout
-    //mMainLayout->addWidget(mMenuBar);
-    //mMainLayout->addWidget(mSpaceWars);
 
     //connect signals
     connect(mSettingsPage->getCombo(), SIGNAL(currentTextChanged(const QString &)), mSpaceWars, SLOT(setGameLevel(const QString &)));

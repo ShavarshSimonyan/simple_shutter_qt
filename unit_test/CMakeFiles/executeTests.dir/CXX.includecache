@@ -15,8 +15,6 @@ QList
 -
 
 /home/shavarsh/qt-projects/simple_shutter/unit_test/main.cpp
-cmath
--
 cassert
 -
 gtest/gtest.h

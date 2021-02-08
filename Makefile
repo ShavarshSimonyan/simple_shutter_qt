@@ -64,6 +64,7 @@ SOURCES       = main.cpp \
 		menus/settingsPage.cpp \
 		menus/userInfoPage.cpp \
 		utils/TextViewer.cpp qrc_res.cpp \
+		moc_dbData.cpp \
 		moc_Bullet.cpp \
 		moc_Enemy.cpp \
 		moc_Player.cpp \
@@ -84,6 +85,7 @@ OBJECTS       = main.o \
 		userInfoPage.o \
 		TextViewer.o \
 		qrc_res.o \
+		moc_dbData.o \
 		moc_Bullet.o \
 		moc_Enemy.o \
 		moc_Player.o \
@@ -418,9 +420,14 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 	g++ -pipe -O2 -Wall -W -dM -E -o moc_predefs.h /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_Bullet.cpp moc_Enemy.cpp moc_Player.cpp moc_SpaceWars.cpp moc_MainWindow.cpp moc_recordsPage.cpp moc_userInfoPage.cpp
+compiler_moc_header_make_all: moc_dbData.cpp moc_Bullet.cpp moc_Enemy.cpp moc_Player.cpp moc_SpaceWars.cpp moc_MainWindow.cpp moc_recordsPage.cpp moc_userInfoPage.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_Bullet.cpp moc_Enemy.cpp moc_Player.cpp moc_SpaceWars.cpp moc_MainWindow.cpp moc_recordsPage.cpp moc_userInfoPage.cpp
+	-$(DEL_FILE) moc_dbData.cpp moc_Bullet.cpp moc_Enemy.cpp moc_Player.cpp moc_SpaceWars.cpp moc_MainWindow.cpp moc_recordsPage.cpp moc_userInfoPage.cpp
+moc_dbData.cpp: db_handling/dbData.h \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/shavarsh/qt-projects/simple_shutter/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/shavarsh/qt-projects/simple_shutter -I/home/shavarsh/qt-projects/simple_shutter -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtMultimedia -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/x86_64-linux-gnu/c++/9 -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include db_handling/dbData.h -o moc_dbData.cpp
+
 moc_Bullet.cpp: game_attributes/Bullet.h \
 		game_attributes/SpaceObject.h \
 		moc_predefs.h \
@@ -549,7 +556,8 @@ MainWindow.o: mainwindow/MainWindow.cpp mainwindow/MainWindow.h \
 		utils/TextViewer.h \
 		menus/settingsPage.h \
 		menus/userInfoPage.h \
-		menus/recordsPage.h
+		menus/recordsPage.h \
+		db_handling/dbData.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o MainWindow.o mainwindow/MainWindow.cpp
 
 recordsPage.o: menus/recordsPage.cpp menus/recordsPage.h \
@@ -568,6 +576,9 @@ TextViewer.o: utils/TextViewer.cpp utils/TextViewer.h
 
 qrc_res.o: qrc_res.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_res.o qrc_res.cpp
+
+moc_dbData.o: moc_dbData.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_dbData.o moc_dbData.cpp
 
 moc_Bullet.o: moc_Bullet.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Bullet.o moc_Bullet.cpp

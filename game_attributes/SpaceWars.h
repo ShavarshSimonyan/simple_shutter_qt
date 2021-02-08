@@ -9,7 +9,6 @@
 #include <QScopedPointer>
 #include <QHash>
 #include <QMediaPlayer>
-#include <QVBoxLayout>
 #include <QMenuBar>
 
 #include "Enemy.h"
